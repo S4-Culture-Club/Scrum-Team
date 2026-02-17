@@ -1,0 +1,2344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint Team Health Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F3EDE6;
+    --surface: #FFFFFF;
+    --surface-alt: #FAF7F4;
+    --border: #E0D8CF;
+    --border-focus: #8B7355;
+    --text: #1F1A12;
+    --text-secondary: #5C4F3F;
+    --text-tertiary: #8E826F;
+    --accent: #D4512E;
+    --accent-light: #FFF0EC;
+    --accent-hover: #B8421F;
+    --green: #1E8C52;
+    --green-light: #E6F9EE;
+    --amber: #C07A10;
+    --amber-light: #FFF6E0;
+    --red: #D4412E;
+    --red-light: #FFEBE8;
+    --purple: #7548B2;
+    --purple-light: #F2ECFF;
+    --blue: #2E6FBF;
+    --blue-light: #E8F1FF;
+    --teal: #1A7F7F;
+    --teal-light: #E4F6F6;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow-sm: 0 1px 4px rgba(31,26,18,0.07);
+    --shadow-md: 0 4px 16px rgba(31,26,18,0.09);
+    --shadow-lg: 0 8px 32px rgba(31,26,18,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #1A150E 0%, #2C2418 40%, #3D3224 100%);
+    color: white;
+    padding: 32px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(26,21,14,0.35);
+    border-bottom: 3px solid var(--accent);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .header h1 span { color: var(--accent); }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+
+  .save-status {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  .save-status.saving { color: #FFD166; background: rgba(255,209,102,0.15); }
+  .save-status.saved { color: #6EE7A0; background: rgba(110,231,160,0.12); }
+
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    color: white;
+    box-shadow: 0 2px 6px rgba(212,81,46,0.2);
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, var(--accent-hover) 0%, #9E3718 100%); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(212,81,46,0.3); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { background: var(--surface); border-color: var(--border-focus); }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid transparent;
+  }
+  .btn-danger:hover { background: var(--red-light); }
+  .btn-small { padding: 5px 12px; font-size: 0.78rem; }
+
+  /* ── Main Layout ── */
+  .main { max-width: 1400px; margin: 0 auto; padding: 32px 40px 80px; }
+
+  /* ── Team Setup ── */
+  .team-setup {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    transition: box-shadow 0.3s ease;
+  }
+  .team-setup:hover { box-shadow: var(--shadow-md); }
+  .team-setup-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .team-setup-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .team-members-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .team-member-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .team-member-chip:hover { border-color: var(--border-focus); box-shadow: var(--shadow-sm); }
+  .team-member-chip .avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: white;
+  }
+  .team-member-chip .remove-member {
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+  .team-member-chip .remove-member:hover { opacity: 1; color: var(--red); }
+
+  .add-member-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .add-member-inline input {
+    border: 1px dashed var(--border);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 0.85rem;
+    font-family: 'DM Sans', sans-serif;
+    background: transparent;
+    width: 140px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .add-member-inline input:focus { border-color: var(--accent); border-style: solid; }
+  .add-member-inline input::placeholder { color: var(--text-tertiary); }
+
+  /* ── Sprint Rating Section ── */
+  .section-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  .section-card:hover { box-shadow: var(--shadow-md); }
+  .section-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+  }
+  .section-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .section-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    flex: 1;
+  }
+  .section-header .avg-badge {
+    font-size: 1.4rem;
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    padding: 4px 16px;
+    border-radius: 10px;
+    min-width: 60px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  .section-body { padding: 0; }
+
+  /* ── Sprint Rating Grid ── */
+  .sprint-rating-grid { padding: 24px 32px; }
+  .sprint-member-row {
+    display: grid;
+    grid-template-columns: 160px 100px 1fr;
+    gap: 16px;
+    align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .sprint-member-row:last-child { border-bottom: none; }
+  .sprint-member-row .member-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sprint-member-row .member-name .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .score-input-wrap {
+    position: relative;
+  }
+  .score-input {
+    width: 80px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+    background: var(--surface-alt);
+  }
+  .score-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(196,93,62,0.1); }
+  .score-input::placeholder { color: var(--text-tertiary); font-weight: 400; }
+  .score-input.invalid { border-color: var(--red); background: var(--red-light); animation: headShake 0.4s ease; }
+  .score-input.valid { border-color: var(--green); box-shadow: 0 0 0 3px rgba(30,140,82,0.1); }
+
+  .comment-input {
+    width: 100%;
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.2s;
+    background: var(--surface-alt);
+    resize: none;
+    min-height: 38px;
+  }
+  .comment-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(196,93,62,0.1); }
+  .comment-input::placeholder { color: var(--text-tertiary); }
+
+  /* ── Question Cards ── */
+  .dimension-group { margin-bottom: 32px; }
+  .dimension-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+    border-left: 3px solid transparent;
+  }
+  .dimension-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .question-card {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .question-card:last-child { border-bottom: none; }
+  .question-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+  }
+  .question-number {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    color: var(--text-tertiary);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    min-width: 28px;
+  }
+
+  .scores-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .member-score-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .member-score-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .member-score-input {
+    width: 56px;
+    height: 44px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: all 0.2s;
+    background: var(--surface-alt);
+  }
+  .member-score-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(196,93,62,0.1); }
+  .member-score-input::placeholder { color: var(--text-tertiary); font-weight: 400; font-size: 0.85rem; }
+  .member-score-input.invalid { border-color: var(--red); background: var(--red-light); animation: headShake 0.4s ease; }
+  .member-score-input.valid { border-color: var(--green); box-shadow: 0 0 0 3px rgba(30,140,82,0.1); }
+
+  .avg-divider {
+    width: 1px;
+    height: 44px;
+    background: var(--border);
+    margin: 18px 6px 0;
+  }
+  .avg-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .avg-display .member-score-label { color: var(--accent); }
+  .avg-value {
+    width: 62px;
+    height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    transition: all 0.3s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .question-notes {
+    margin-top: 4px;
+  }
+  .notes-toggle {
+    font-size: 0.8rem;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+    transition: color 0.2s;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .notes-toggle:hover { color: var(--accent); }
+  .notes-toggle.has-content { color: var(--accent); }
+
+  .notes-area {
+    margin-top: 10px;
+    display: none;
+  }
+  .notes-area.open { display: block; }
+  .notes-textarea {
+    width: 100%;
+    min-height: 70px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.2s;
+    background: var(--surface-alt);
+    resize: vertical;
+    line-height: 1.5;
+  }
+  .notes-textarea:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(196,93,62,0.1); }
+  .notes-textarea::placeholder { color: var(--text-tertiary); }
+
+  .notes-label-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .notes-label-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+
+  /* ── Actions Section ── */
+  .actions-section {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    margin-top: 32px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  .actions-section:hover { box-shadow: var(--shadow-md); }
+  .actions-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+  }
+  .actions-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .action-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(212,81,46,0.25);
+  }
+  .actions-body { padding: 24px 32px; }
+  .action-item {
+    display: grid;
+    grid-template-columns: 1fr 160px 120px 40px;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .action-item:last-child { border-bottom: none; }
+  .action-input {
+    width: 100%;
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    background: var(--surface-alt);
+    transition: all 0.2s;
+  }
+  .action-input:focus { border-color: var(--accent); background: white; box-shadow: 0 0 0 3px rgba(196,93,62,0.1); }
+  .action-input::placeholder { color: var(--text-tertiary); }
+
+  /* ── Summary Bar ── */
+  .summary-bar {
+    background: linear-gradient(135deg, #FFFFFF 0%, var(--surface-alt) 100%);
+    border-radius: var(--radius-lg);
+    padding: 24px 32px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border);
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--green), var(--blue), var(--purple), var(--accent));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px;
+    border-right: 1px solid var(--border);
+    min-width: 100px;
+  }
+  .summary-item:last-child { border-right: none; }
+  .summary-item .label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .summary-item .value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  /* ── Score Colors ── */
+  .score-high { color: var(--green); background: var(--green-light); border: 1px solid #B5E5C8; }
+  .score-mid { color: var(--amber); background: var(--amber-light); border: 1px solid #F0D89A; }
+  .score-low { color: var(--red); background: var(--red-light); border: 1px solid #F5B8B0; }
+
+  /* ── Insights Section ── */
+  .insights-section {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  .insights-section:hover { box-shadow: var(--shadow-md); }
+  .insights-header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-alt) 100%);
+  }
+  .insights-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    flex: 1;
+  }
+  .insights-body { padding: 0; }
+
+  .insights-dim-group {
+    border-bottom: 1px solid var(--border);
+  }
+  .insights-dim-group:last-child { border-bottom: none; }
+  .insights-dim-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--surface-alt);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .insights-dim-header:hover { background: #EDE7DF; }
+  .insights-dim-header .dim-avg-pill {
+    margin-left: auto;
+    font-family: 'Fraunces', serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    padding: 3px 14px;
+    border-radius: 8px;
+    letter-spacing: 0;
+    text-transform: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .insights-dim-header .toggle-arrow {
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    color: var(--text-tertiary);
+  }
+  .insights-dim-header.collapsed .toggle-arrow { transform: rotate(-90deg); }
+  .insights-dim-content { padding: 0; }
+  .insights-dim-content.hidden { display: none; }
+
+  .insight-card {
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .insight-card:last-child { border-bottom: none; }
+
+  .insight-score-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .insight-content { min-width: 0; }
+  .insight-question {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .insight-question .q-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    color: var(--text-tertiary);
+    margin-right: 6px;
+  }
+
+  .insight-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .insight-interpretation {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+
+  .insight-actions-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+  }
+
+  .insight-action-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    padding: 4px 0;
+  }
+  .insight-action-item .action-bullet {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    margin-top: 2px;
+  }
+
+  .insight-variance {
+    margin-top: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--purple-light) 0%, #EDE6FF 100%);
+    border: 1px solid #D5C8F0;
+    font-size: 0.8rem;
+    color: var(--purple);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 1px 4px rgba(117,72,178,0.08);
+  }
+
+  .insights-empty {
+    padding: 40px 32px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 0.9rem;
+  }
+  .insights-empty .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  /* ── Export/Reset ── */
+  .footer-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .header { padding: 20px 16px; }
+    .main { padding: 20px 16px 60px; }
+    .section-header, .question-card, .sprint-rating-grid,
+    .actions-body, .actions-header, .dimension-label { padding-left: 16px; padding-right: 16px; }
+    .insight-card, .insights-dim-header, .insights-header { padding-left: 16px; padding-right: 16px; }
+    .insight-card { grid-template-columns: 44px 1fr; gap: 12px; }
+    .score-instructions { padding-left: 16px; padding-right: 16px; }
+    .scale-labels { flex-wrap: wrap; }
+    .sprint-member-row { grid-template-columns: 1fr; gap: 8px; }
+    .action-item { grid-template-columns: 1fr; }
+    .scores-row { gap: 6px; }
+    .member-score-input { width: 48px; height: 40px; font-size: 1rem; }
+  }
+
+  /* ── Print ── */
+  @media print {
+    .header { position: static; }
+    .btn, .add-member-inline, .notes-toggle, .footer-actions { display: none !important; }
+    .notes-area { display: block !important; }
+    .section-card, .team-setup, .actions-section, .summary-bar, .insights-section { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes headShake {
+    0% { transform: translateX(0); }
+    15% { transform: translateX(-4px); }
+    30% { transform: translateX(4px); }
+    45% { transform: translateX(-2px); }
+    60% { transform: translateX(2px); }
+    75% { transform: translateX(-1px); }
+    100% { transform: translateX(0); }
+  }
+  .section-card, .team-setup, .summary-bar, .actions-section, .insights-section { animation: fadeIn 0.4s ease both; }
+
+  /* ── Score Instructions ── */
+  .score-instructions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 32px;
+    background: linear-gradient(135deg, var(--blue-light) 0%, #F0F5FF 100%);
+    border-bottom: 1px solid #D0DFF5;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    flex-wrap: wrap;
+  }
+  .score-instructions .instructions-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    background: white;
+    color: var(--blue);
+    box-shadow: 0 1px 3px rgba(46,111,191,0.12);
+  }
+  .score-instructions strong { color: var(--text); font-weight: 700; }
+  .scale-labels {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .scale-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .scale-chip .chip-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+  }
+  .scale-chip.chip-low { border-color: #F5B8B0; background: var(--red-light); }
+  .scale-chip.chip-low .chip-num { color: var(--red); }
+  .scale-chip.chip-mid { border-color: #F0D89A; background: var(--amber-light); }
+  .scale-chip.chip-mid .chip-num { color: var(--amber); }
+  .scale-chip.chip-high { border-color: #B5E5C8; background: var(--green-light); }
+  .scale-chip.chip-high .chip-num { color: var(--green); }
+  .section-card:nth-child(2) { animation-delay: 0.05s; }
+  .section-card:nth-child(3) { animation-delay: 0.1s; }
+
+  /* Sprint Name */
+  .sprint-name-input {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: white;
+    padding: 6px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    outline: none;
+    width: 160px;
+    transition: all 0.2s;
+  }
+  .sprint-name-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
+  .sprint-name-input::placeholder { color: rgba(255,255,255,0.35); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <h1>Sprint Team <span>Health Assessment</span></h1>
+    </div>
+    <div class="header-actions">
+      <input type="text" class="sprint-name-input" id="sprintName" placeholder="Sprint name..." />
+      <span class="save-status" id="saveStatus">Ready</span>
+      <button class="btn btn-secondary" onclick="saveManual()">💾 Save</button>
+      <button class="btn btn-secondary" onclick="exportJSON()">📤 Export</button>
+      <button class="btn btn-secondary" onclick="importJSON()">📥 Import</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" />
+      <button class="btn btn-secondary" onclick="printPage()">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <!-- Team Setup -->
+  <div class="team-setup">
+    <div class="team-setup-header">
+      <h2>👥 Team Members</h2>
+    </div>
+    <div class="team-members-list" id="teamMembersList">
+      <div class="add-member-inline">
+        <input type="text" id="newMemberInput" placeholder="+ Add member..." onkeydown="if(event.key==='Enter')addMember()" />
+        <button class="btn btn-small btn-ghost" onclick="addMember()">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Bar -->
+  <div class="summary-bar" id="summaryBar"></div>
+
+  <!-- Last Sprint Rating -->
+  <div class="section-card" id="sprintRatingSection">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--purple-light);color:var(--purple);">⭐</div>
+      <h2>Last Sprint Rating</h2>
+      <div class="avg-badge score-mid" id="sprintAvgBadge">—</div>
+    </div>
+    <div class="score-instructions">
+      <div class="instructions-icon">ℹ️</div>
+      <div>
+        <strong>How to score:</strong> Each team member rates the last sprint from <strong>1 to 5</strong> (whole numbers only). Only values 1–5 are accepted.
+        <div class="scale-labels">
+          <span class="scale-chip chip-low"><span class="chip-num">1</span> Strongly Disagree</span>
+          <span class="scale-chip chip-low"><span class="chip-num">2</span> Disagree</span>
+          <span class="scale-chip chip-mid"><span class="chip-num">3</span> Neutral</span>
+          <span class="scale-chip chip-high"><span class="chip-num">4</span> Agree</span>
+          <span class="scale-chip chip-high"><span class="chip-num">5</span> Strongly Agree</span>
+        </div>
+      </div>
+    </div>
+    <div class="sprint-rating-grid" id="sprintRatingGrid">
+      <p style="color:var(--text-tertiary);font-size:0.9rem;padding:12px 0;">Add team members above to begin scoring.</p>
+    </div>
+  </div>
+
+  <!-- Assessment Questions -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--accent-light);color:var(--accent);">📋</div>
+      <h2>Team Health Questions</h2>
+      <div class="avg-badge score-mid" id="overallAvgBadge">—</div>
+    </div>
+    <div class="score-instructions">
+      <div class="instructions-icon">ℹ️</div>
+      <div>
+        <strong>Score each question from 1 to 5</strong> — how much do you agree with the statement? Score individually and honestly. Only whole numbers 1–5 are accepted.
+        <div class="scale-labels">
+          <span class="scale-chip chip-low"><span class="chip-num">1</span> Strongly Disagree</span>
+          <span class="scale-chip chip-low"><span class="chip-num">2</span> Disagree</span>
+          <span class="scale-chip chip-mid"><span class="chip-num">3</span> Neutral</span>
+          <span class="scale-chip chip-high"><span class="chip-num">4</span> Agree</span>
+          <span class="scale-chip chip-high"><span class="chip-num">5</span> Strongly Agree</span>
+        </div>
+      </div>
+    </div>
+    <div class="section-body" id="questionsContainer"></div>
+  </div>
+
+  <!-- Insights & Suggested Actions -->
+  <div class="insights-section" id="insightsSection">
+    <div class="insights-header">
+      <div class="section-icon" style="background:var(--green-light);color:var(--green);">💡</div>
+      <h2>Insights & Suggested Actions</h2>
+    </div>
+    <div class="insights-body" id="insightsContainer">
+      <div class="insights-empty">
+        <div class="empty-icon">📊</div>
+        Score at least one question above to see insights and suggested actions.
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions-section">
+    <div class="actions-header">
+      <h2>🎯 Actions <span class="action-count" id="actionCount">0</span></h2>
+      <button class="btn btn-small btn-ghost" onclick="addAction()">+ Add Action</button>
+    </div>
+    <div class="actions-body" id="actionsContainer">
+      <p style="color:var(--text-tertiary);font-size:0.9rem;" id="noActionsMsg">No actions yet. Add actions based on the lowest-scoring areas.</p>
+    </div>
+  </div>
+
+  <div class="footer-actions">
+    <button class="btn btn-danger" onclick="if(confirm('Clear ALL data and reset? This cannot be undone.')) resetAll()">🗑 Reset Everything</button>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const AVATAR_COLORS = ['#D4512E','#1E8C52','#2E6FBF','#7548B2','#C07A10','#1A7F7F','#A34D6A','#4A5FA8','#8B7335','#4A8B5E'];
+
+const DIMENSIONS = [
+  { id: 'psych-safety', label: 'Psychological Safety', color: '#1E8C52', colorLight: '#E6F9EE' },
+  { id: 'why-scrum', label: 'Understanding Why We Do Scrum', color: '#2E6FBF', colorLight: '#E8F1FF' },
+  { id: 'sprint-goal', label: 'Sprint Goal & Collective Ownership', color: '#7548B2', colorLight: '#F2ECFF' },
+  { id: 'collaboration', label: 'Cross-Functional Collaboration', color: '#D4512E', colorLight: '#FFEBE8' },
+  { id: 'qa-in-team', label: 'QA as Part of the Team', color: '#1A7F7F', colorLight: '#E4F6F6' },
+  { id: 'ways-of-working', label: 'Ways of Working & Integration', color: '#C07A10', colorLight: '#FFF6E0' },
+];
+
+const QUESTIONS = [
+  { id: 'q1', dim: 'psych-safety', text: 'I feel safe to raise concerns or flag risks without fear of blame or negative consequences.' },
+  { id: 'q2', dim: 'psych-safety', text: 'I feel comfortable challenging a technical approach or decision made by a teammate, even if it might slow us down.' },
+  { id: 'q3', dim: 'psych-safety', text: 'When I make a mistake, I feel confident admitting it to the team without worrying it will be held against me.' },
+  { id: 'q4', dim: 'psych-safety', text: 'When I\'m blocked or unsure, I ask for help quickly rather than trying to solve it alone for too long.' },
+  { id: 'q5', dim: 'why-scrum', text: 'I understand why we work in sprints and how the Scrum framework helps us deliver better outcomes — not just faster ones.' },
+  { id: 'q6', dim: 'why-scrum', text: 'I understand what I should be doing during the sprint to contribute to the sprint goal, beyond just working on my assigned stories.' },
+  { id: 'q7', dim: 'why-scrum', text: 'I see our ceremonies (stand-ups, refinement, retros) as valuable tools that help us deliver — not just process overhead.' },
+  { id: 'q8', dim: 'why-scrum', text: 'I understand why we estimate and size stories, and how this helps us plan sprints more realistically — not just to measure speed.' },
+  { id: 'q9', dim: 'sprint-goal', text: 'Our sprint goal describes a meaningful outcome, not just a list of stories to complete.' },
+  { id: 'q10', dim: 'sprint-goal', text: 'I feel responsible for the sprint goal as a whole — not just the stories assigned to me.' },
+  { id: 'q11', dim: 'sprint-goal', text: 'When a story is blocked or at risk, multiple team members swarm to help rather than only the assigned person working on it.' },
+  { id: 'q12', dim: 'sprint-goal', text: 'In our Daily Scrum, we discuss progress toward the sprint goal as a team — not just give individual status updates on our own stories.' },
+  { id: 'q13', dim: 'collaboration', text: 'Dev and QA collaborate during implementation — not just after a handoff when code is "done."' },
+  { id: 'q14', dim: 'collaboration', text: 'I know when to involve Product and UI/UX for immediate feedback or decisions during the sprint, rather than waiting for review.' },
+  { id: 'q15', dim: 'collaboration', text: 'We discuss stories together as Dev, QA, and Product before development starts (Three Amigos or similar).' },
+  { id: 'q16', dim: 'collaboration', text: 'When new information emerges mid-sprint, we adapt together as a team rather than just the affected person adjusting alone.' },
+  { id: 'q17', dim: 'collaboration', text: 'I understand how my work impacts other team members\' work within the same epic — and I proactively coordinate with them.' },
+  { id: 'q18', dim: 'qa-in-team', text: 'I understand why QA effort is included in our sprint capacity and sprint goal — and I treat testing as part of delivering the story, not a separate phase after it.' },
+  { id: 'q19', dim: 'qa-in-team', text: 'QA is involved in refinement sessions and helps shape acceptance criteria and identify edge cases before stories enter a sprint.' },
+  { id: 'q20', dim: 'qa-in-team', text: 'When a defect is found during testing, the team treats it as shared learning rather than a developer\'s individual failure.' },
+  { id: 'q21', dim: 'ways-of-working', text: 'Our Definition of Done includes verifying how a story integrates with related stories in the same epic — not just that the story works in isolation.' },
+  { id: 'q22', dim: 'ways-of-working', text: 'Dependencies between stories within an epic are identified and discussed during refinement, before we commit to them in a sprint.' },
+  { id: 'q23', dim: 'ways-of-working', text: 'Our refinement sessions produce stories that are clear, sized, and ready to start — we rarely discover missing details after we begin development.' },
+  { id: 'q24', dim: 'ways-of-working', text: 'We distinguish between "story done" and "feature/epic done" — and our process includes steps to verify the whole feature works together, not just individual stories.' },
+];
+
+// ── QUESTION INSIGHTS DATA ──
+const QUESTION_INSIGHTS = {
+  q1: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Team members don\'t feel safe raising concerns. This is the foundation — if people can\'t speak up, every other score is unreliable because people will self-censor rather than flag real problems.',
+      actions: [
+        'Open retros with the Retrospective Prime Directive every single time',
+        'As Scrum Master, model vulnerability by sharing your own mistakes first',
+        'Introduce anonymous "concern cards" — written, shuffled, read aloud by SM'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some safety exists but it\'s inconsistent — people may speak up about small issues but hold back on bigger concerns or disagreements with senior team members.',
+      actions: [
+        'Use round-robin in retros so everyone speaks, not just the confident voices',
+        'Follow up privately with quieter members to check what they didn\'t say publicly',
+        'Celebrate publicly when someone flags a risk that saves the team time'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Team members feel genuinely safe to raise concerns. This is your strongest asset — protect it actively, especially during stressful sprints.',
+      actions: [
+        'Maintain this by continuing to respond positively when concerns are raised',
+        'Watch for regression during high-pressure delivery periods'
+      ]
+    }
+  },
+  q2: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'People won\'t challenge technical decisions, which means poor approaches go unchecked. This directly causes integration failures when nobody questions how stories connect technically.',
+      actions: [
+        'Introduce structured "Devil\'s Advocate" rotation in refinement — one person\'s job is to question the approach',
+        'Normalise "I disagree with the approach, here\'s why" as professional, not personal',
+        'Tech Lead should explicitly invite challenges: "What could go wrong with this approach?"'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Challenges happen occasionally but there may be a hierarchy effect — junior members defer to seniors even when they see problems.',
+      actions: [
+        'Have junior devs present their technical approaches first in discussions, before seniors speak',
+        'Frame challenges as "What are we missing?" rather than "You\'re wrong"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Healthy technical debate happens naturally. The team catches design issues early through constructive challenge.',
+      actions: [
+        'Keep encouraging — this is rare and valuable',
+        'Ensure challenges lead to resolution, not endless debate'
+      ]
+    }
+  },
+  q3: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'People hide mistakes rather than surfacing them. Hidden mistakes compound — a small error caught early is a 5-minute fix, but a hidden one becomes a sprint-wrecking defect discovered during integration.',
+      actions: [
+        'SM and Tech Lead to publicly share their own recent mistakes to normalise it',
+        'Introduce blameless post-mortems for defects — focus on "what happened" not "who did it"',
+        'Reframe mistakes as learning: "What did this teach us about our process?"'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'People will admit mistakes eventually, but there\'s a delay — they try to fix quietly first, and only admit when it becomes visible. That delay costs time.',
+      actions: [
+        'Create a "fail fast" culture: reward early disclosure, not silent fixes',
+        'Track how quickly issues get flagged — shorter time-to-disclosure = healthier team'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Mistakes are treated as natural and shared openly. The team learns fast because information flows freely.',
+      actions: [
+        'Consider a "mistake of the sprint" lighthearted award to keep it normalised',
+        'Use admitted mistakes as refinement input — "What process gap allowed this?"'
+      ]
+    }
+  },
+  q4: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'People sit blocked for hours or even a full day before asking for help. This is the "silent struggle" pattern — it destroys sprint velocity and means blockers aren\'t visible in stand-ups until it\'s too late.',
+      actions: [
+        'Set a team agreement: "If you\'re stuck for more than 30 minutes, pair with someone"',
+        'Add a "blocked/need help" signal to your chat channel that\'s low-friction to use',
+        'In Daily Scrum, explicitly ask: "Is anyone stuck on something right now?"'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'People ask for help eventually but wait longer than they should. The threshold for asking varies — some ask quickly, others suffer in silence.',
+      actions: [
+        'Normalise pairing as a default, not a last resort — "Let\'s pair on this" should be easy to say',
+        'Track time-to-help-request as an informal team metric — discuss in retros'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Help-seeking is fast and natural. The team self-organises around blockers quickly, keeping work flowing.',
+      actions: [
+        'This is excellent — highlight it as a team strength',
+        'Ensure knowledge sharing happens through the pairing so it reduces future blockers too'
+      ]
+    }
+  },
+  q5: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'The team sees sprints as arbitrary deadlines rather than learning cycles. Without understanding why we use Scrum, ceremonies feel like overhead and process compliance rather than tools for better delivery.',
+      actions: [
+        'Run a "Why Scrum?" workshop — 30 minutes exploring the problems Scrum solves vs. waterfall',
+        'Show concrete examples from the team\'s own history where sprints caught issues early',
+        'Stop saying "the process requires..." — instead explain the benefit: "this helps us because..."'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Partial understanding exists — the team follows the framework but may see some ceremonies as unnecessary overhead rather than valuable feedback loops.',
+      actions: [
+        'At the start of each ceremony, briefly state its purpose: "We refine so we don\'t discover gaps mid-sprint"',
+        'Collect "ceremony value" feedback monthly — ask which parts help vs. which feel wasteful'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team understands Scrum as a tool for better outcomes, not just faster delivery. Ceremonies are seen as genuinely valuable.',
+      actions: [
+        'The team can now start adapting ceremonies to their specific needs',
+        'Consider having team members facilitate ceremonies to deepen ownership'
+      ]
+    }
+  },
+  q6: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Team members only focus on their assigned stories and don\'t see the bigger picture. This is a root cause of integration failures — everyone finishes "their bit" without checking how it fits together.',
+      actions: [
+        'Introduce "shift right to Done" stand-ups — walk the board right-to-left, focus on finishing over starting',
+        'Ask in Daily Scrum: "What can you do today to help move someone else\'s story to Done?"',
+        'Make sprint goal visible on every screen — not just the story list'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some awareness exists but contribution beyond assigned stories is reactive, not proactive. People help when asked but don\'t look for opportunities.',
+      actions: [
+        'Pair developers on related stories within the same epic for at least one sprint',
+        'Explicitly discuss in sprint planning: "Beyond your stories, what else might need attention?"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Team members actively look beyond their own stories to support the sprint goal. This is the "team sport" mindset in action.',
+      actions: [
+        'Reinforce by highlighting examples in retros where someone helped beyond their assignment',
+        'Consider reducing individual story assignment in favour of team-pulled work'
+      ]
+    }
+  },
+  q7: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Ceremonies are seen as pointless meetings. When the team doesn\'t value stand-ups, refinement, or retros, they disengage — and that\'s where misalignment, unclear stories, and repeated mistakes come from.',
+      actions: [
+        'Audit each ceremony for value: trim what\'s wasteful, amplify what works',
+        'Let the team co-design ceremony formats — ownership increases engagement',
+        'Time-box ruthlessly: a focused 15-minute stand-up beats a wandering 30-minute one'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some ceremonies are valued but others feel like going through the motions. Stand-ups might feel useful but retros might feel repetitive, or vice versa.',
+      actions: [
+        'Rotate retro formats to keep them fresh — different activities surface different insights',
+        'Ask the team each sprint: "Which ceremony helped most this sprint? Which helped least?"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team sees ceremonies as genuine tools, not overhead. They\'d notice and complain if you removed one — that\'s the test of real value.',
+      actions: [
+        'Empower the team to evolve ceremonies as they mature',
+        'Start experimenting: can you shorten something that\'s already working well?'
+      ]
+    }
+  },
+  q8: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'The team doesn\'t understand why we estimate. They may see story points as a management tracking tool rather than a planning aid — leading to gaming, inflating, or ignoring estimates entirely.',
+      actions: [
+        'Explain the purpose: "We estimate to plan realistic sprints, not to measure individual performance"',
+        'Show how past estimates vs. actuals helped the team commit more realistically',
+        'Never use velocity or story points to evaluate individual developer performance — make this explicit'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team estimates but doesn\'t fully connect it to planning value. Estimates may be inconsistent or treated as guesses rather than collaborative calibration.',
+      actions: [
+        'Use Planning Poker consistently — the discussion it forces is more valuable than the number',
+        'Review estimate accuracy in retros: not to blame, but to calibrate together'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Estimation is understood as a collaborative planning tool. The team uses past velocity to make realistic commitments and knows when to flag uncertainty.',
+      actions: [
+        'As accuracy improves, the team can experiment with forecasting and release planning',
+        'Use estimation discussions to spot complexity early — "Why does this feel bigger than a 3?"'
+      ]
+    }
+  },
+  q9: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'The sprint goal is just "complete stories X, Y, Z" — a shopping list, not an outcome. Without a meaningful goal, there\'s no forcing function for integration. Stories exist independently rather than contributing to a coherent result.',
+      actions: [
+        'Rewrite sprint goals as outcomes: "Enable bureau users to manage employee records end-to-end" not "Complete stories 101-108"',
+        'Product Owner and Scrum Master to co-craft the goal before sprint planning, then refine with the team',
+        'Test the goal: "If we drop one story, does the goal still make sense?" — if not, it\'s a list, not a goal'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Sprint goals exist but are sometimes too vague or too tied to individual stories. The team partly uses them for direction but doesn\'t always rally around them.',
+      actions: [
+        'Use the "elevator pitch" format: In this sprint, we will [outcome] so that [value]',
+        'Reference the sprint goal in every Daily Scrum — "How does today\'s work move us toward the goal?"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Sprint goals genuinely describe meaningful outcomes. The team uses them for decision-making during the sprint — when trade-offs arise, the goal guides priorities.',
+      actions: [
+        'Start experimenting with stretch goals alongside the committed sprint goal',
+        'Share sprint goals with stakeholders to strengthen alignment'
+      ]
+    }
+  },
+  q10: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Individual ownership dominates — "my stories" mindset. This is the classic anti-pattern where everyone finishes their piece but nobody owns the whole. Integration gaps thrive here because the space between stories belongs to no one.',
+      actions: [
+        'Stop using "assigned to" language — use "working on" instead, and emphasise team commitment',
+        'Introduce swarming: when a story is at risk, the whole team pivots to help finish it before starting new work',
+        'Add "sprint goal check" to Daily Scrum: "Are we on track for the goal?" — not just "what did I do yesterday?"'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'People understand collective ownership intellectually but default to individual focus under pressure. When the sprint gets tight, "my stories" thinking returns.',
+      actions: [
+        'Use Fill the Bucket planning — team collectively pulls stories rather than individual assignment',
+        'Celebrate "assists" in retros — who helped finish someone else\'s story?'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team genuinely shares ownership of the sprint goal. People proactively help each other and see success as collective.',
+      actions: [
+        'This is working — protect it during stressful periods',
+        'Consider sharing this approach with other teams as a case study'
+      ]
+    }
+  },
+  q11: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Nobody helps when a teammate is stuck — work proceeds in parallel silos. Blocked stories stay blocked while the team starts new work, creating a growing pile of unfinished items that undermines the sprint goal.',
+      actions: [
+        'Establish a "stop starting, start finishing" rule — no new stories until blocked stories are unblocked',
+        'In Daily Scrum, when someone mentions a blocker, immediately ask: "Who can pair on this today?"',
+        'Track WIP limits — if everyone has 2+ stories in progress simultaneously, swarming isn\'t happening'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Swarming happens for critical issues but not for everyday blockers. The team helps when asked but doesn\'t proactively offer.',
+      actions: [
+        'Make "offer before being asked" the team norm — explicitly discuss this in a retro',
+        'Use WIP limits on the board: when someone finishes, their first question should be "Who needs help?"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team naturally swarms on blocked work. People finish together rather than starting individually. This is a hallmark of a mature Scrum team.',
+      actions: [
+        'Reinforce this — it directly prevents sprint goal failures',
+        'Track how often swarming happens and correlate with sprint success rates'
+      ]
+    }
+  },
+  q12: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Daily Scrum is a status report to the Scrum Master, not a team coordination event. When individuals just say "I did X, I\'ll do Y," nobody connects the dots between stories or spots emerging risks to the sprint goal.',
+      actions: [
+        'Switch to right-to-left board walking — start from stories closest to Done and work backwards',
+        'Replace "What did I do?" with "What\'s needed to move us closer to the sprint goal today?"',
+        'Display the sprint goal prominently during stand-up — every update should reference it'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The Daily Scrum mixes individual updates with some goal-focused discussion, but defaults to status reporting when the team is busy or stressed.',
+      actions: [
+        'Try the "sprint goal first" format: start by reviewing goal progress, then discuss blockers, then individual updates only if needed',
+        'SM to gently redirect when updates drift to individual status: "How does that affect the sprint goal?"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The Daily Scrum is a genuine team coordination event focused on the sprint goal. The team uses it to adapt plans and help each other.',
+      actions: [
+        'Consider letting the team self-facilitate — they own the conversation',
+        'Keep it sharp: if it consistently runs under 10 minutes, that\'s a sign of great focus'
+      ]
+    }
+  },
+  q13: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Dev and QA operate in a mini-waterfall within the sprint — code is written, "thrown over the wall" to QA, and issues are found late. This is one of the top causes of integration failures because QA only sees the story in isolation after it\'s built.',
+      actions: [
+        'Pair QA with Dev during implementation — QA writes test cases while Dev codes, they collaborate on edge cases in real-time',
+        'QA joins story kick-off conversations so they understand intent, not just acceptance criteria',
+        'Move QA involvement from "after code complete" to "from story start" — even if it\'s just reviewing the approach'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some collaboration happens but it\'s inconsistent. QA might be involved early on some stories but still receives others as a handoff.',
+      actions: [
+        'Make "QA engaged before code complete" part of your Definition of Done',
+        'Schedule brief daily Dev-QA sync during the sprint for stories in progress'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Dev and QA collaborate throughout implementation. Defects are caught during development, not after. This significantly reduces late-sprint surprises.',
+      actions: [
+        'Continue and formalise — make this a team working agreement',
+        'Consider QA contributing to automated test development alongside manual testing'
+      ]
+    }
+  },
+  q14: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Decisions that need Product or UI/UX input are queued until sprint review or ad-hoc meetings, causing rework. The team builds assumptions into stories that should have been validated early.',
+      actions: [
+        'Agree a "response time SLA" with Product Owner — questions during the sprint get answered within 4 hours',
+        'Create a simple decision log: when the team makes an assumption, log it and flag to PO immediately',
+        'UI/UX to provide design walkthroughs before sprint starts, plus be available for quick clarifications during the sprint'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team involves Product/UI sometimes but isn\'t confident about when to escalate vs. when to decide independently. Some decisions get delayed unnecessarily.',
+      actions: [
+        'Define a clear "decision authority" framework: what devs can decide alone vs. what needs PO/UX input',
+        'Add a standing "quick questions" slot in the PO\'s calendar that the team can use without booking a meeting'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team knows exactly when to pull in Product and UI/UX, and those stakeholders are responsive. Decisions happen quickly without blocking work.',
+      actions: [
+        'Document this pattern as a team working agreement so it survives team changes',
+        'Share the decision framework with new joiners as part of onboarding'
+      ]
+    }
+  },
+  q15: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Stories go straight from refinement to development without a shared understanding between Dev, QA, and Product. Each perspective discovers gaps independently during implementation — and the integration between stories is never discussed upfront.',
+      actions: [
+        'Introduce Three Amigos sessions: Dev, QA, and PO discuss each story for 10-15 minutes before sprint starts',
+        'Use the format: PO explains the "what and why," Dev explains the "how," QA asks "what could go wrong?"',
+        'Make Three Amigos a gate: no story enters the sprint without all three perspectives aligned'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Three Amigos happens for some stories but not consistently. Complex stories may get discussed, while "simple" ones skip it — and those "simple" stories sometimes have hidden complexity.',
+      actions: [
+        'Apply Three Amigos to every story, even simple ones — keep it to 5 minutes for small stories',
+        'Rotate who leads the conversation to build shared ownership of the practice'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Dev, QA, and Product regularly discuss stories together before development. The team catches assumptions, missing acceptance criteria, and edge cases early.',
+      actions: [
+        'Extend the conversation to include integration points: "How does this story interact with others in the epic?"',
+        'Consider lightweight documentation of key decisions from Three Amigos sessions'
+      ]
+    }
+  },
+  q16: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'When surprises hit mid-sprint, only the directly affected person adapts — the rest of the team carries on with the original plan. This means the sprint goal drifts without anyone recalibrating the team\'s collective approach.',
+      actions: [
+        'When new info emerges, call a quick 10-minute team huddle rather than handling it 1:1',
+        'Establish a "sprint goal at risk" trigger — when impact is significant, the team re-plans together',
+        'SM to watch for signals: if one person is quietly adjusting scope, surface it to the team'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team adapts together for big surprises but handles smaller changes individually. Some mid-sprint adjustments happen in silos without the team knowing.',
+      actions: [
+        'Use the Daily Scrum as the natural checkpoint: "Has anything changed that affects our plan?"',
+        'Make scope or approach changes visible on the board immediately, not just verbally'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team naturally re-coordinates when new information emerges. They treat change as a team event, not an individual burden. This is agility in practice.',
+      actions: [
+        'This is a core agile strength — document how the team does this for onboarding new members',
+        'Use examples from past sprints in retros: "Remember when X changed and we adapted well?"'
+      ]
+    }
+  },
+  q17: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Developers work in tunnel vision — they complete their story without considering how it connects to others in the same epic. This is a primary root cause of your integration gap: stories are built on incompatible assumptions.',
+      actions: [
+        'Add "impact mapping" to refinement: for each story, explicitly ask "What other stories does this touch?"',
+        'Pair developers working on related stories — even 30 minutes of joint design prevents divergence',
+        'Create a simple epic-level architecture sketch that shows how stories connect technically'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some awareness exists but it\'s passive — developers know their work connects to others but don\'t actively coordinate during implementation.',
+      actions: [
+        'Schedule a brief mid-sprint "integration check" for stories within the same epic',
+        'Encourage devs to review each other\'s PRs specifically for integration impact, not just code quality'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Developers proactively coordinate when working on related stories. They understand the epic context and design for integration from the start.',
+      actions: [
+        'This is excellent and directly prevents integration failures — reinforce it',
+        'Extend this mindset to cross-epic dependencies as the team matures'
+      ]
+    }
+  },
+  q18: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'QA is still seen as a separate phase — "Dev builds, then QA tests." This means testing capacity isn\'t factored into sprint commitments, stories get marked "dev done" without being truly Done, and the sprint goal doesn\'t account for the full effort needed.',
+      actions: [
+        'Recalculate sprint capacity to explicitly include QA effort per story — make it visible in planning',
+        'Remove the concept of "dev done" — a story is either Done (including tested) or it\'s not Done',
+        'Have QA present their effort estimate for each story during sprint planning alongside the dev estimate'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team acknowledges QA as part of delivery but sometimes under-allocates testing time or treats it as secondary. Under pressure, testing gets compressed.',
+      actions: [
+        'Include QA effort in story point estimates rather than treating it as separate overhead',
+        'Track the ratio of "dev done but not tested" stories at end-of-sprint — this makes the gap visible'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'QA is fully integrated into sprint capacity and goal. Testing is seen as part of delivering the story, not a gate after development.',
+      actions: [
+        'Continue to protect testing time even under delivery pressure',
+        'Explore QA contributing to refinement by identifying testability concerns early'
+      ]
+    }
+  },
+  q19: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'QA only sees stories after they\'re written and estimated — they have no input on acceptance criteria, edge cases, or testability. This means stories enter the sprint with blind spots that only surface during testing, causing late-sprint rework.',
+      actions: [
+        'Include QA Lead in all refinement sessions — not as an observer but as an equal voice',
+        'QA to review acceptance criteria before sprint planning and add missing test scenarios',
+        'Ask QA in refinement: "What edge cases should we test? What could go wrong?" — capture these in the story'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'QA attends refinement but their input isn\'t consistently sought or incorporated. They may flag concerns that get noted but not acted on.',
+      actions: [
+        'Give QA a formal role in refinement: they sign off on acceptance criteria completeness',
+        'Track how often QA-flagged concerns in refinement prevent defects in the sprint — make the value visible'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'QA actively shapes stories during refinement. Acceptance criteria are comprehensive because they include the testing perspective from the start.',
+      actions: [
+        'This is a major quality driver — protect it as a non-negotiable practice',
+        'Consider having QA write the initial acceptance criteria draft for PO to validate'
+      ]
+    }
+  },
+  q20: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Defects create blame, not learning. When a bug is found, the focus is "who wrote this?" rather than "what process gap allowed this?" This kills psychological safety around quality and makes developers defensive about QA feedback.',
+      actions: [
+        'Implement blameless defect reviews: "What allowed this to happen?" not "Who caused this?"',
+        'Reframe defects as process improvement data — every defect reveals a gap in DoD, testing, or refinement',
+        'SM to intervene immediately if blame language appears: redirect to systemic causes'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team doesn\'t explicitly blame, but there\'s subtle defensiveness when defects are found. Developers may feel their work is being criticised rather than seeing QA as a collaborative partner.',
+      actions: [
+        'Frame QA findings as "we found this together" rather than "I found your bug"',
+        'Celebrate defects caught before release as team successes, not developer failures'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Defects are treated as shared learning opportunities. Dev and QA have a collaborative relationship around quality, and finding bugs early is celebrated rather than feared.',
+      actions: [
+        'Use defect patterns as refinement input: "We keep missing X type of edge case — how do we prevent that?"',
+        'This healthy dynamic strengthens both safety and quality — reinforce it in retros'
+      ]
+    }
+  },
+  q21: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'This is likely the primary root cause of your integration gap. The Definition of Done only validates stories in isolation — individual stories pass all their acceptance criteria but nobody checks how they work together at the epic level until it\'s too late.',
+      actions: [
+        'Add to Definition of Done: "Integration with related stories in the same epic has been verified"',
+        'Create EPIC-level acceptance criteria during refinement, not just story-level',
+        'Implement a mid-sprint integration check: when 2+ stories in the same epic are Done, test them together before moving on'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some integration awareness exists but it\'s informal — people sometimes check how stories connect, but it\'s not systematic. Integration testing happens late or inconsistently.',
+      actions: [
+        'Formalise integration verification as a DoD checklist item with specific criteria',
+        'Assign a "story connector" role each sprint — someone who specifically checks how Done stories integrate'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team\'s Definition of Done includes integration verification. Stories are validated both individually and in the context of the broader epic. This is the key defence against integration failures.',
+      actions: [
+        'Share this practice as a case study — many teams struggle with this',
+        'Consider automated integration tests that run when related stories are both merged'
+      ]
+    }
+  },
+  q22: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Dependencies between stories within an epic are discovered during the sprint, not before it. This causes blocked work, unexpected rework, and stories that can\'t integrate because they were built on different assumptions.',
+      actions: [
+        'Add a "dependency mapping" step to refinement: for each story, ask "What other stories does this depend on or affect?"',
+        'Visualise dependencies on the sprint board — use swimlanes or linking to make them visible',
+        'Prioritise dependent stories in sequence, not in parallel, unless the team has explicitly coordinated the approach'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Some dependencies are caught in refinement, but the more subtle ones — especially cross-story data contracts, shared components, and API interfaces — slip through.',
+      actions: [
+        'Use the Tier 3 complexity framework: stories with multiple dependencies get a Design Spike before committing',
+        'Tech Lead to review story groupings within epics specifically for technical dependencies'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Dependencies are identified and discussed during refinement. The team enters sprints with eyes open about which stories are connected and how to sequence them.',
+      actions: [
+        'Maintain this practice — it\'s a key prevention mechanism for integration failures',
+        'Use dependency patterns to inform story splitting — if dependencies are complex, the story may need breaking down further'
+      ]
+    }
+  },
+  q23: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'Stories enter the sprint half-baked — missing acceptance criteria, unclear scope, unresolved technical questions. Developers spend sprint time doing discovery work that should have happened in refinement, eating into delivery time.',
+      actions: [
+        'Implement a strict Definition of Ready: no story enters a sprint without clear AC, sizing, and identified dependencies',
+        'Refinement should happen the sprint before: Monday sessions for sprint N+1, Wednesday for N+2',
+        'If a story fails the "Could a new team member start this?" test, it\'s not ready — send it back to refinement'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'Most stories are reasonably clear but 1-2 per sprint still have gaps that surface during development. The team fills in the blanks on the fly rather than pushing back.',
+      actions: [
+        'Track which stories needed mid-sprint clarification — discuss in retros and refine the refinement process',
+        'Empower the team to reject unclear stories from sprint planning: "This isn\'t ready, let\'s refine it more"'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'Refinement produces truly ready stories. Developers can start work immediately without chasing missing information. This is a sign of mature backlog management.',
+      actions: [
+        'This directly improves predictability — celebrate it and keep the standard high',
+        'Use refinement quality as an input to capacity planning: better refinement = higher delivery confidence'
+      ]
+    }
+  },
+  q24: {
+    low: {
+      status: '🚨 Critical Gap',
+      interpretation: 'The team has no concept of "feature done" vs "story done." Stories are marked complete individually, but nobody checks whether the full feature works until the end of the epic — by which point integration failures are expensive to fix.',
+      actions: [
+        'Create explicit EPIC-level Definition of Done alongside story-level DoD',
+        'Add a "feature integration" column to the board: stories move there after story-Done to await whole-feature verification',
+        'Demo stories at Sprint Review as integrated feature flows, not story-by-story presentations'
+      ]
+    },
+    mid: {
+      status: '⚠️ Developing',
+      interpretation: 'The team informally recognises that feature completion is different from story completion, but there\'s no structured process to bridge the gap. Integration checks happen ad-hoc.',
+      actions: [
+        'Formalise the distinction: add an "integration verified" step to your workflow for epic-related stories',
+        'Schedule a brief end-of-sprint integration review for each active epic before Sprint Review'
+      ]
+    },
+    high: {
+      status: '✅ Healthy',
+      interpretation: 'The team clearly distinguishes story-level and feature-level completion. Integration is verified as stories accumulate, not deferred until the epic is "finished." This is the ultimate defence against your integration gap.',
+      actions: [
+        'This is the gold standard — your team has closed the integration gap at a process level',
+        'Consider automating integration verification with feature-level test suites'
+      ]
+    }
+  }
+};
+
+let state = {
+  sprintName: '',
+  members: [],
+  sprintRatings: {},  // { memberId: { score, comment } }
+  questionScores: {}, // { questionId: { memberId: score } }
+  questionNotes: {},  // { questionId: string }
+  actions: [],        // [{ text, owner, status }]
+};
+
+let autoSaveTimer = null;
+
+// ── INIT ──
+function init() {
+  loadState();
+  renderTeamMembers();
+  renderQuestions();
+  renderSprintRatings();
+  renderActions();
+  updateAllAverages();
+  document.getElementById('sprintName').value = state.sprintName || '';
+  document.getElementById('sprintName').addEventListener('input', (e) => {
+    state.sprintName = e.target.value;
+    triggerAutoSave();
+  });
+}
+
+// ── SAVE / LOAD ──
+function saveState() {
+  try {
+    localStorage.setItem('teamHealthAssessment', JSON.stringify(state));
+    showSaveStatus('saved');
+  } catch(e) {
+    showSaveStatus('error');
+  }
+}
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('teamHealthAssessment');
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function triggerAutoSave() {
+  showSaveStatus('saving');
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => saveState(), 800);
+}
+
+function saveManual() {
+  saveState();
+}
+
+function showSaveStatus(status) {
+  const el = document.getElementById('saveStatus');
+  if (status === 'saving') { el.textContent = 'Saving...'; el.className = 'save-status saving'; }
+  else if (status === 'saved') {
+    el.textContent = '✓ Saved';
+    el.className = 'save-status saved';
+    setTimeout(() => { el.textContent = 'Auto-saved'; el.className = 'save-status'; }, 2000);
+  }
+  else { el.textContent = 'Error'; el.className = 'save-status'; }
+}
+
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `team-health-${state.sprintName || 'assessment'}-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSON() {
+  document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        state = JSON.parse(ev.target.result);
+        saveState();
+        init();
+      } catch(err) { alert('Invalid file format.'); }
+    };
+    reader.readAsText(file);
+  };
+}
+
+function resetAll() {
+  state = { sprintName: '', members: [], sprintRatings: {}, questionScores: {}, questionNotes: {}, actions: [] };
+  saveState();
+  init();
+}
+
+function printPage() { window.print(); }
+
+// ── TEAM MEMBERS ──
+function getAvatarColor(idx) { return AVATAR_COLORS[idx % AVATAR_COLORS.length]; }
+function getInitials(name) { return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2); }
+
+function addMember() {
+  const input = document.getElementById('newMemberInput');
+  const name = input.value.trim();
+  if (!name) return;
+  const id = 'm_' + Date.now();
+  state.members.push({ id, name });
+  input.value = '';
+  triggerAutoSave();
+  renderTeamMembers();
+  renderSprintRatings();
+  renderQuestions();
+  updateAllAverages();
+}
+
+function removeMember(id) {
+  if (!confirm('Remove this team member and their scores?')) return;
+  state.members = state.members.filter(m => m.id !== id);
+  delete state.sprintRatings[id];
+  for (const qid in state.questionScores) {
+    delete state.questionScores[qid][id];
+  }
+  triggerAutoSave();
+  renderTeamMembers();
+  renderSprintRatings();
+  renderQuestions();
+  updateAllAverages();
+}
+
+function renderTeamMembers() {
+  const container = document.getElementById('teamMembersList');
+  let html = '';
+  state.members.forEach((m, i) => {
+    html += `<div class="team-member-chip">
+      <div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(m.name)}</div>
+      ${m.name}
+      <span class="remove-member" onclick="removeMember('${m.id}')">&times;</span>
+    </div>`;
+  });
+  html += `<div class="add-member-inline">
+    <input type="text" id="newMemberInput" placeholder="+ Add member..." onkeydown="if(event.key==='Enter')addMember()" />
+    <button class="btn btn-small btn-ghost" onclick="addMember()">Add</button>
+  </div>`;
+  container.innerHTML = html;
+}
+
+// ── SPRINT RATINGS ──
+function renderSprintRatings() {
+  const grid = document.getElementById('sprintRatingGrid');
+  if (state.members.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-tertiary);font-size:0.9rem;padding:12px 0;">Add team members above to begin scoring.</p>';
+    return;
+  }
+  let html = '<div class="sprint-member-row" style="border-bottom:2px solid var(--border);padding-bottom:8px;margin-bottom:4px;">' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Team Member</div>' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Score (1-5)</div>' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Comment</div></div>';
+
+  state.members.forEach((m, i) => {
+    const r = state.sprintRatings[m.id] || {};
+    html += `<div class="sprint-member-row">
+      <div class="member-name"><div class="avatar" style="background:${getAvatarColor(i)}">${getInitials(m.name)}</div>${m.name}</div>
+      <div><input type="number" class="score-input" min="1" max="5" step="1" placeholder="1–5" value="${r.score || ''}"
+        onkeydown="filterScoreKeys(event)"
+        oninput="handleScoreInput(this)"
+        onchange="commitSprintRating(this,'${m.id}')"
+        onblur="commitSprintRating(this,'${m.id}')" /></div>
+      <div><textarea class="comment-input" rows="1" placeholder="Optional comment..."
+        oninput="setSprintRating('${m.id}','comment',this.value)">${r.comment || ''}</textarea></div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  updateSprintAvg();
+}
+
+function setSprintRating(memberId, field, value) {
+  if (!state.sprintRatings[memberId]) state.sprintRatings[memberId] = {};
+  if (field === 'comment') {
+    state.sprintRatings[memberId].comment = value;
+  }
+  triggerAutoSave();
+  updateSprintAvg();
+  updateSummary();
+}
+
+// ── SCORE VALIDATION ──
+function filterScoreKeys(e) {
+  // Allow: backspace, delete, tab, escape, arrow keys
+  const allowed = ['Backspace','Delete','Tab','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+  if (allowed.includes(e.key)) return;
+  // Block everything except 1-5
+  if (!'12345'.includes(e.key)) {
+    e.preventDefault();
+    // Show shake animation for invalid keys
+    e.target.classList.add('invalid');
+    setTimeout(() => e.target.classList.remove('invalid'), 400);
+  }
+}
+
+function handleScoreInput(el) {
+  // Strip anything that isn't 1-5 and limit to 1 character
+  let raw = el.value.replace(/[^1-5]/g, '');
+  if (raw.length > 1) raw = raw.charAt(0);
+  if (el.value !== raw) el.value = raw;
+
+  // Visual feedback
+  el.classList.remove('invalid', 'valid');
+  if (raw === '') return; // Empty is fine, just no score yet
+  const v = parseInt(raw);
+  if (v >= 1 && v <= 5) {
+    el.classList.add('valid');
+    setTimeout(() => el.classList.remove('valid'), 800);
+  }
+}
+
+function isValidScore(value) {
+  if (value === '' || value == null) return { valid: true, score: null }; // Empty = no score
+  const v = parseInt(value);
+  if (isNaN(v) || v < 1 || v > 5 || value.toString().includes('.')) return { valid: false, score: null };
+  return { valid: true, score: v };
+}
+
+function commitSprintRating(el, memberId) {
+  const result = isValidScore(el.value);
+  if (!result.valid) {
+    el.classList.add('invalid');
+    setTimeout(() => { el.classList.remove('invalid'); el.value = ''; }, 400);
+    if (!state.sprintRatings[memberId]) state.sprintRatings[memberId] = {};
+    state.sprintRatings[memberId].score = null;
+  } else {
+    el.classList.remove('invalid');
+    if (result.score != null) el.value = result.score;
+    if (!state.sprintRatings[memberId]) state.sprintRatings[memberId] = {};
+    state.sprintRatings[memberId].score = result.score;
+  }
+  triggerAutoSave();
+  updateSprintAvg();
+  updateSummary();
+}
+
+function commitQuestionScore(el, qid, mid) {
+  const result = isValidScore(el.value);
+  if (!state.questionScores[qid]) state.questionScores[qid] = {};
+  if (!result.valid) {
+    el.classList.add('invalid');
+    setTimeout(() => { el.classList.remove('invalid'); el.value = ''; }, 400);
+    state.questionScores[qid][mid] = null;
+  } else {
+    el.classList.remove('invalid');
+    if (result.score != null) el.value = result.score;
+    state.questionScores[qid][mid] = result.score;
+  }
+  triggerAutoSave();
+  updateQuestionAvg(qid);
+  updateDimensionAvgs();
+  updateSummary();
+  renderInsights();
+}
+
+function updateSprintAvg() {
+  const scores = state.members.map(m => state.sprintRatings[m.id]?.score).filter(s => s != null);
+  const badge = document.getElementById('sprintAvgBadge');
+  if (scores.length === 0) { badge.textContent = '—'; badge.className = 'avg-badge score-mid'; return; }
+  const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+  badge.textContent = avg.toFixed(1);
+  badge.className = 'avg-badge ' + getScoreClass(avg);
+}
+
+// ── QUESTIONS ──
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  let html = '';
+  let currentDim = '';
+
+  QUESTIONS.forEach((q, qi) => {
+    const dim = DIMENSIONS.find(d => d.id === q.dim);
+    if (q.dim !== currentDim) {
+      currentDim = q.dim;
+      html += `<div class="dimension-label" style="border-left-color:${dim.color}">
+        <div class="dimension-dot" style="background:${dim.color}"></div>
+        ${dim.label}
+      </div>`;
+    }
+
+    const notes = state.questionNotes[q.id] || '';
+    const hasNotes = notes.length > 0;
+
+    html += `<div class="question-card" id="qcard_${q.id}">
+      <div class="question-text">
+        <span class="question-number">${qi + 1}.</span>
+        <span>${q.text}</span>
+      </div>
+      <div class="scores-row">`;
+
+    state.members.forEach((m, i) => {
+      const score = state.questionScores[q.id]?.[m.id] || '';
+      html += `<div class="member-score-box">
+        <div class="member-score-label">${getInitials(m.name)}</div>
+        <input type="number" class="member-score-input" min="1" max="5" step="1" placeholder="1–5"
+          value="${score}"
+          onkeydown="filterScoreKeys(event)"
+          oninput="handleScoreInput(this)"
+          onchange="commitQuestionScore(this,'${q.id}','${m.id}')"
+          onblur="commitQuestionScore(this,'${q.id}','${m.id}')" />
+      </div>`;
+    });
+
+    html += `<div class="avg-divider"></div>
+      <div class="avg-display">
+        <div class="member-score-label">AVG</div>
+        <div class="avg-value" id="avg_${q.id}">—</div>
+      </div>
+    </div>
+
+    <div class="question-notes">
+      <button class="notes-toggle ${hasNotes ? 'has-content' : ''}" onclick="toggleNotes('${q.id}')">
+        ${hasNotes ? '📝 Notes & Actions ▾' : '+ Notes & Actions'}
+      </button>
+      <div class="notes-area ${hasNotes ? 'open' : ''}" id="notes_${q.id}">
+        <div class="notes-label-row">
+          <span class="notes-label-tag" style="background:${dim.colorLight};color:${dim.color};">Notes</span>
+          <span class="notes-label-tag" style="background:var(--amber-light);color:var(--amber);">Actions</span>
+        </div>
+        <textarea class="notes-textarea" placeholder="Capture discussion notes, observations, and actions for this question..."
+          oninput="setQuestionNotes('${q.id}',this.value)">${notes}</textarea>
+      </div>
+    </div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function setQuestionNotes(qid, value) {
+  state.questionNotes[qid] = value;
+  triggerAutoSave();
+  // Update toggle button style
+  const toggle = document.querySelector(`#qcard_${qid} .notes-toggle`);
+  if (toggle) {
+    toggle.className = 'notes-toggle ' + (value.length > 0 ? 'has-content' : '');
+    toggle.innerHTML = value.length > 0 ? '📝 Notes & Actions ▾' : '+ Notes & Actions';
+  }
+}
+
+function toggleNotes(qid) {
+  const area = document.getElementById('notes_' + qid);
+  area.classList.toggle('open');
+}
+
+function updateQuestionAvg(qid) {
+  const scores = state.members.map(m => state.questionScores[qid]?.[m.id]).filter(s => s != null);
+  const el = document.getElementById('avg_' + qid);
+  if (!el) return;
+  if (scores.length === 0) { el.textContent = '—'; el.className = 'avg-value'; return; }
+  const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+  el.textContent = avg.toFixed(1);
+  el.className = 'avg-value ' + getScoreClass(avg);
+}
+
+function updateAllAverages() {
+  QUESTIONS.forEach(q => updateQuestionAvg(q.id));
+  updateSprintAvg();
+  updateDimensionAvgs();
+  updateSummary();
+  renderInsights();
+}
+
+function updateDimensionAvgs() {
+  const badge = document.getElementById('overallAvgBadge');
+  let allScores = [];
+  QUESTIONS.forEach(q => {
+    state.members.forEach(m => {
+      const s = state.questionScores[q.id]?.[m.id];
+      if (s != null) allScores.push(s);
+    });
+  });
+  if (allScores.length === 0) { badge.textContent = '—'; badge.className = 'avg-badge score-mid'; return; }
+  const avg = allScores.reduce((a,b) => a+b, 0) / allScores.length;
+  badge.textContent = avg.toFixed(1);
+  badge.className = 'avg-badge ' + getScoreClass(avg);
+}
+
+function updateSummary() {
+  const bar = document.getElementById('summaryBar');
+  let html = '';
+
+  // Overall avg
+  let allScores = [];
+  QUESTIONS.forEach(q => {
+    state.members.forEach(m => {
+      const s = state.questionScores[q.id]?.[m.id];
+      if (s != null) allScores.push(s);
+    });
+  });
+  const overallAvg = allScores.length > 0 ? (allScores.reduce((a,b)=>a+b,0)/allScores.length) : null;
+  html += `<div class="summary-item">
+    <div class="label">Overall</div>
+    <div class="value ${overallAvg ? getScoreClass(overallAvg) : ''}" style="padding:2px 8px;border-radius:6px;">${overallAvg ? overallAvg.toFixed(1) : '—'}</div>
+  </div>`;
+
+  // Per dimension
+  DIMENSIONS.forEach(dim => {
+    const dimQs = QUESTIONS.filter(q => q.dim === dim.id);
+    let dimScores = [];
+    dimQs.forEach(q => {
+      state.members.forEach(m => {
+        const s = state.questionScores[q.id]?.[m.id];
+        if (s != null) dimScores.push(s);
+      });
+    });
+    const avg = dimScores.length > 0 ? (dimScores.reduce((a,b)=>a+b,0)/dimScores.length) : null;
+    html += `<div class="summary-item">
+      <div class="label" style="color:${dim.color}">${dim.label.split(' ').slice(0,2).join(' ')}</div>
+      <div class="value ${avg ? getScoreClass(avg) : ''}" style="padding:2px 8px;border-radius:6px;">${avg ? avg.toFixed(1) : '—'}</div>
+    </div>`;
+  });
+
+  bar.innerHTML = html;
+}
+
+// ── INSIGHTS ──
+function getInsightTier(avg) {
+  if (avg < 2.5) return 'low';
+  if (avg < 3.8) return 'mid';
+  return 'high';
+}
+
+function getScoreVariance(qid) {
+  const scores = state.members.map(m => state.questionScores[qid]?.[m.id]).filter(s => s != null);
+  if (scores.length < 2) return { variance: 0, min: 0, max: 0, spread: 0 };
+  const min = Math.min(...scores);
+  const max = Math.max(...scores);
+  const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+  const variance = scores.reduce((sum, s) => sum + Math.pow(s - avg, 2), 0) / scores.length;
+  return { variance, min, max, spread: max - min };
+}
+
+function renderInsights() {
+  const container = document.getElementById('insightsContainer');
+
+  // Check if any scores exist
+  let hasAnyScores = false;
+  QUESTIONS.forEach(q => {
+    state.members.forEach(m => {
+      if (state.questionScores[q.id]?.[m.id] != null) hasAnyScores = true;
+    });
+  });
+
+  if (!hasAnyScores || state.members.length === 0) {
+    container.innerHTML = `<div class="insights-empty">
+      <div class="empty-icon">📊</div>
+      Score at least one question above to see insights and suggested actions.
+    </div>`;
+    return;
+  }
+
+  let html = '';
+
+  // Group by dimension
+  DIMENSIONS.forEach(dim => {
+    const dimQuestions = QUESTIONS.filter(q => q.dim === dim.id);
+
+    // Calculate dimension average
+    let dimScores = [];
+    dimQuestions.forEach(q => {
+      state.members.forEach(m => {
+        const s = state.questionScores[q.id]?.[m.id];
+        if (s != null) dimScores.push(s);
+      });
+    });
+    const dimAvg = dimScores.length > 0 ? (dimScores.reduce((a,b)=>a+b,0)/dimScores.length) : null;
+
+    // Check if any question in this dimension has scores
+    let dimHasScores = false;
+    dimQuestions.forEach(q => {
+      state.members.forEach(m => {
+        if (state.questionScores[q.id]?.[m.id] != null) dimHasScores = true;
+      });
+    });
+    if (!dimHasScores) return;
+
+    const dimScoreClass = dimAvg ? getScoreClass(dimAvg) : '';
+
+    html += `<div class="insights-dim-group">
+      <div class="insights-dim-header" onclick="toggleInsightDim(this)">
+        <div class="dimension-dot" style="background:${dim.color}"></div>
+        ${dim.label}
+        ${dimAvg ? `<div class="dim-avg-pill ${dimScoreClass}">${dimAvg.toFixed(1)}</div>` : ''}
+        <span class="toggle-arrow">▾</span>
+      </div>
+      <div class="insights-dim-content">`;
+
+    dimQuestions.forEach((q, qi) => {
+      const scores = state.members.map(m => state.questionScores[q.id]?.[m.id]).filter(s => s != null);
+      if (scores.length === 0) return;
+
+      const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+      const tier = getInsightTier(avg);
+      const insight = QUESTION_INSIGHTS[q.id]?.[tier];
+      if (!insight) return;
+
+      const scoreClass = getScoreClass(avg);
+      const variance = getScoreVariance(q.id);
+      const qIndex = QUESTIONS.indexOf(q) + 1;
+
+      // Determine action bullet style per tier
+      let bulletBg, bulletColor;
+      if (tier === 'low') { bulletBg = 'var(--red-light)'; bulletColor = 'var(--red)'; }
+      else if (tier === 'mid') { bulletBg = 'var(--amber-light)'; bulletColor = 'var(--amber)'; }
+      else { bulletBg = 'var(--green-light)'; bulletColor = 'var(--green)'; }
+
+      html += `<div class="insight-card">
+        <div class="insight-score-badge ${scoreClass}">${avg.toFixed(1)}</div>
+        <div class="insight-content">
+          <div class="insight-question"><span class="q-num">Q${qIndex}.</span>${q.text}</div>
+          <div class="insight-status ${scoreClass}">${insight.status}</div>
+          <div class="insight-interpretation">${insight.interpretation}</div>`;
+
+      // Variance warning
+      if (variance.spread >= 2 && scores.length >= 2) {
+        html += `<div class="insight-variance">
+          ⚡ High variance detected — scores range from ${variance.min} to ${variance.max}. The team experiences this very differently. Discuss why.
+        </div>`;
+      }
+
+      html += `<div class="insight-actions-label">Suggested Actions</div>`;
+      insight.actions.forEach(action => {
+        html += `<div class="insight-action-item">
+          <div class="action-bullet" style="background:${bulletBg};color:${bulletColor};">→</div>
+          <span>${action}</span>
+        </div>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function toggleInsightDim(header) {
+  header.classList.toggle('collapsed');
+  const content = header.nextElementSibling;
+  content.classList.toggle('hidden');
+}
+
+// ── ACTIONS ──
+function addAction() {
+  state.actions.push({ text: '', owner: '', status: 'To Do' });
+  triggerAutoSave();
+  renderActions();
+}
+
+function removeAction(idx) {
+  state.actions.splice(idx, 1);
+  triggerAutoSave();
+  renderActions();
+}
+
+function setAction(idx, field, value) {
+  state.actions[idx][field] = value;
+  triggerAutoSave();
+  updateActionCount();
+}
+
+function renderActions() {
+  const container = document.getElementById('actionsContainer');
+  const msg = document.getElementById('noActionsMsg');
+  if (state.actions.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-tertiary);font-size:0.9rem;" id="noActionsMsg">No actions yet. Add actions based on the lowest-scoring areas.</p>';
+    updateActionCount();
+    return;
+  }
+
+  let html = '<div class="action-item" style="padding-bottom:6px;border-bottom:2px solid var(--border);">' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Action</div>' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Owner</div>' +
+    '<div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-tertiary);">Status</div>' +
+    '<div></div></div>';
+
+  state.actions.forEach((a, i) => {
+    html += `<div class="action-item">
+      <input class="action-input" placeholder="Describe the action..." value="${escHtml(a.text)}" oninput="setAction(${i},'text',this.value)" />
+      <input class="action-input" placeholder="Owner..." value="${escHtml(a.owner)}" oninput="setAction(${i},'owner',this.value)" />
+      <select class="action-input" onchange="setAction(${i},'status',this.value)" style="cursor:pointer;">
+        <option ${a.status==='To Do'?'selected':''}>To Do</option>
+        <option ${a.status==='In Progress'?'selected':''}>In Progress</option>
+        <option ${a.status==='Done'?'selected':''}>Done</option>
+      </select>
+      <button class="btn btn-danger btn-small" onclick="removeAction(${i})" title="Remove">✕</button>
+    </div>`;
+  });
+  container.innerHTML = html;
+  updateActionCount();
+}
+
+function updateActionCount() {
+  const el = document.getElementById('actionCount');
+  el.textContent = state.actions.filter(a => a.text.trim()).length;
+}
+
+// ── HELPERS ──
+function getScoreClass(score) {
+  if (score >= 3.8) return 'score-high';
+  if (score >= 2.5) return 'score-mid';
+  return 'score-low';
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+// ── GO ──
+init();
+</script>
+</body>
+</html>
