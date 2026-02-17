@@ -911,7 +911,174 @@
   }
   .sprint-name-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
   .sprint-name-input::placeholder { color: rgba(255,255,255,0.35); }
+  /* ── Import Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(31,26,18,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    max-width: 740px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: fadeIn 0.25s ease;
+  }
+  .modal-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .modal-header h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    padding: 4px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--red); }
+  .modal-body { padding: 24px 28px; }
+  .modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .import-dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text-tertiary);
+    transition: all 0.2s;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  .import-dropzone:hover, .import-dropzone.drag-over {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .import-dropzone .drop-icon { font-size: 2rem; margin-bottom: 8px; }
+  .import-dropzone .drop-text { font-size: 0.9rem; font-weight: 500; }
+  .import-dropzone .drop-hint { font-size: 0.78rem; margin-top: 4px; }
+
+  .import-preview { margin-top: 16px; }
+  .import-preview-header {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .import-preview-count {
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: var(--green);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .import-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .import-preview-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+  .import-preview-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .import-preview-table tr:nth-child(even) td { background: var(--surface-alt); }
+
+  .import-alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .import-alert-icon { flex-shrink: 0; font-size: 1rem; }
+  .import-alert.alert-info { background: var(--blue-light); color: var(--blue); border: 1px solid #C0D8F0; }
+  .import-alert.alert-warn { background: var(--amber-light); color: #8B6610; border: 1px solid #E8D490; }
+  .import-alert.alert-error { background: var(--red-light); color: var(--red); border: 1px solid #F0B0A8; }
+  .import-alert.alert-success { background: var(--green-light); color: var(--green); border: 1px solid #A8D8B8; }
+
+  .import-mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .import-mode-btn {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .import-mode-btn:hover { border-color: var(--border-focus); }
+  .import-mode-btn.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .import-mode-btn .mode-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
@@ -927,6 +1094,8 @@
       <button class="btn btn-secondary" onclick="exportJSON()">📤 Export</button>
       <button class="btn btn-secondary" onclick="importJSON()">📥 Import</button>
       <input type="file" id="importFile" accept=".json" style="display:none" />
+      <button class="btn btn-primary" onclick="openFormsImport()">📊 Import MS Forms</button>
+      <input type="file" id="importFormsFile" accept=".xlsx,.xls,.csv" style="display:none" />
       <button class="btn btn-secondary" onclick="printPage()">🖨 Print</button>
     </div>
   </div>
@@ -1024,6 +1193,45 @@
 
   <div class="footer-actions">
     <button class="btn btn-danger" onclick="if(confirm('Clear ALL data and reset? This cannot be undone.')) resetAll()">🗑 Reset Everything</button>
+  </div>
+</div>
+
+<!-- MS Forms Import Modal -->
+<div class="modal-overlay" id="formsImportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📊 Import from MS Forms</h3>
+      <button class="modal-close" onclick="closeFormsImport()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="import-alert alert-info">
+        <span class="import-alert-icon">ℹ️</span>
+        <div>Export your MS Forms responses to Excel first: <strong>Forms → Responses tab → Open in Excel</strong>. Then upload the .xlsx file below. The form must include a <strong>mandatory Name field</strong> and questions labelled <strong>Q1–Q24</strong>.</div>
+      </div>
+
+      <div class="import-mode-toggle">
+        <button class="import-mode-btn active" id="modeMerge" onclick="setImportMode('merge')">
+          <span class="mode-icon">🔀</span>
+          Merge with existing
+        </button>
+        <button class="import-mode-btn" id="modeReplace" onclick="setImportMode('replace')">
+          <span class="mode-icon">🔄</span>
+          Replace all data
+        </button>
+      </div>
+
+      <div class="import-dropzone" id="formsDropzone" onclick="document.getElementById('importFormsFile').click()">
+        <div class="drop-icon">📁</div>
+        <div class="drop-text">Click to select or drag & drop your Excel file</div>
+        <div class="drop-hint">.xlsx, .xls, or .csv exported from MS Forms</div>
+      </div>
+
+      <div id="formsImportPreview"></div>
+    </div>
+    <div class="modal-footer" id="formsImportFooter" style="display:none;">
+      <button class="btn btn-ghost" onclick="closeFormsImport()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmFormsImport()">✅ Import Scores</button>
+    </div>
   </div>
 </div>
 
@@ -2335,6 +2543,283 @@ function escHtml(str) {
   const div = document.createElement('div');
   div.textContent = str || '';
   return div.innerHTML;
+}
+
+// ── MS FORMS IMPORT ──
+let formsImportData = null;
+let formsImportMode = 'merge';
+
+function openFormsImport() {
+  formsImportData = null;
+  document.getElementById('formsImportPreview').innerHTML = '';
+  document.getElementById('formsImportFooter').style.display = 'none';
+  document.getElementById('formsImportModal').classList.add('open');
+  setImportMode('merge');
+}
+
+function closeFormsImport() {
+  document.getElementById('formsImportModal').classList.remove('open');
+  document.getElementById('importFormsFile').value = '';
+  formsImportData = null;
+}
+
+function setImportMode(mode) {
+  formsImportMode = mode;
+  document.getElementById('modeMerge').classList.toggle('active', mode === 'merge');
+  document.getElementById('modeReplace').classList.toggle('active', mode === 'replace');
+}
+
+// Drag & drop setup
+document.addEventListener('DOMContentLoaded', () => {
+  const dz = document.getElementById('formsDropzone');
+  if (!dz) return;
+  dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) processFormsFile(file);
+  });
+  document.getElementById('importFormsFile').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) processFormsFile(file);
+  });
+});
+
+function processFormsFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+      if (rows.length === 0) {
+        showImportError('The file appears to be empty. Make sure you exported responses from MS Forms.');
+        return;
+      }
+
+      const headers = Object.keys(rows[0]);
+      const mapping = mapFormsColumns(headers);
+
+      if (!mapping.name) {
+        showImportError('Could not find a <strong>Name</strong> column. Make sure your MS Form has a mandatory "Name" or "Your Name" question as the first field.');
+        return;
+      }
+
+      // Parse responses
+      const responses = [];
+      const warnings = [];
+      rows.forEach((row, ri) => {
+        const name = (row[mapping.name] || '').toString().trim();
+        if (!name) {
+          warnings.push(`Row ${ri + 2}: Skipped — no name provided.`);
+          return;
+        }
+
+        const resp = { name, scores: {}, sprintScore: null, sprintComment: '' };
+
+        // Question scores
+        QUESTIONS.forEach(q => {
+          const col = mapping.questions[q.id];
+          if (col && row[col] !== '' && row[col] != null) {
+            const v = parseInt(row[col]);
+            if (v >= 1 && v <= 5) {
+              resp.scores[q.id] = v;
+            } else {
+              warnings.push(`${name}: ${q.id} value "${row[col]}" is not 1-5, skipped.`);
+            }
+          }
+        });
+
+        // Sprint rating
+        if (mapping.sprintRating && row[mapping.sprintRating] !== '' && row[mapping.sprintRating] != null) {
+          const v = parseInt(row[mapping.sprintRating]);
+          if (v >= 1 && v <= 5) resp.sprintScore = v;
+        }
+
+        // Sprint comment
+        if (mapping.sprintComment) {
+          resp.sprintComment = (row[mapping.sprintComment] || '').toString().trim();
+        }
+
+        responses.push(resp);
+      });
+
+      if (responses.length === 0) {
+        showImportError('No valid responses found. Make sure the Name field is filled in for each response.');
+        return;
+      }
+
+      formsImportData = { responses, mapping, warnings };
+      showImportPreview(responses, mapping, warnings);
+      document.getElementById('formsImportFooter').style.display = 'flex';
+
+    } catch (err) {
+      showImportError('Could not read the file. Make sure it\'s a valid Excel export from MS Forms.<br><small>' + escHtml(err.message) + '</small>');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function mapFormsColumns(headers) {
+  const mapping = { name: null, questions: {}, sprintRating: null, sprintComment: null };
+  const lower = headers.map(h => h.toLowerCase().trim());
+
+  // Find Name column
+  const namePatterns = ['your name', 'name', 'full name', 'team member'];
+  for (const pattern of namePatterns) {
+    const idx = lower.findIndex(h => h === pattern || h.startsWith(pattern));
+    if (idx !== -1) { mapping.name = headers[idx]; break; }
+  }
+  // Fallback: first text-looking column after metadata
+  if (!mapping.name) {
+    const skip = ['id', 'start time', 'completion time', 'email', 'last modified'];
+    const idx = lower.findIndex(h => !skip.some(s => h.includes(s)));
+    if (idx !== -1) mapping.name = headers[idx];
+  }
+
+  // Map questions by Q number prefix or keyword matching
+  QUESTIONS.forEach(q => {
+    const qNum = q.id.replace('q', '');
+    const qPrefix = 'q' + qNum;
+
+    // Try Q1., Q1:, Q1 , Q01, etc.
+    let idx = lower.findIndex(h =>
+      h.startsWith(qPrefix + '.') ||
+      h.startsWith(qPrefix + ':') ||
+      h.startsWith(qPrefix + ' ') ||
+      h.startsWith(qPrefix + ')') ||
+      h === qPrefix
+    );
+
+    // Try matching first 40 chars of question text
+    if (idx === -1) {
+      const snippet = q.text.slice(0, 40).toLowerCase();
+      idx = lower.findIndex(h => h.includes(snippet));
+    }
+
+    // Try matching first significant words
+    if (idx === -1) {
+      const words = q.text.toLowerCase().split(/\s+/).filter(w => w.length > 4).slice(0, 3);
+      if (words.length >= 2) {
+        idx = lower.findIndex(h => words.every(w => h.includes(w)));
+      }
+    }
+
+    if (idx !== -1) mapping.questions[q.id] = headers[idx];
+  });
+
+  // Sprint rating
+  const sprintPatterns = ['sprint rating', 'overall sprint', 'rate the last sprint', 'last sprint', 'sprint score'];
+  for (const pattern of sprintPatterns) {
+    const idx = lower.findIndex(h => h.includes(pattern));
+    if (idx !== -1) { mapping.sprintRating = headers[idx]; break; }
+  }
+
+  // Sprint comment
+  const commentPatterns = ['sprint comment', 'comment on the sprint', 'sprint feedback', 'any comments'];
+  for (const pattern of commentPatterns) {
+    const idx = lower.findIndex(h => h.includes(pattern));
+    if (idx !== -1) { mapping.sprintComment = headers[idx]; break; }
+  }
+
+  return mapping;
+}
+
+function showImportError(msg) {
+  document.getElementById('formsImportPreview').innerHTML =
+    `<div class="import-alert alert-error"><span class="import-alert-icon">❌</span><div>${msg}</div></div>`;
+  document.getElementById('formsImportFooter').style.display = 'none';
+}
+
+function showImportPreview(responses, mapping, warnings) {
+  const matched = Object.keys(mapping.questions).length;
+  const total = QUESTIONS.length;
+  let html = '';
+
+  // Mapping status
+  if (matched === total) {
+    html += `<div class="import-alert alert-success"><span class="import-alert-icon">✅</span><div>All ${total} questions matched successfully. Sprint rating column ${mapping.sprintRating ? 'found' : 'not found (will skip)'}.</div></div>`;
+  } else {
+    const missing = QUESTIONS.filter(q => !mapping.questions[q.id]).map(q => q.id.toUpperCase()).join(', ');
+    html += `<div class="import-alert alert-warn"><span class="import-alert-icon">⚠️</span><div>Matched <strong>${matched}/${total}</strong> questions. Missing: ${missing}. These will be left blank.</div></div>`;
+  }
+
+  if (warnings.length > 0) {
+    html += `<div class="import-alert alert-warn"><span class="import-alert-icon">⚠️</span><div>${warnings.slice(0, 5).join('<br>')}${warnings.length > 5 ? '<br>...and ' + (warnings.length - 5) + ' more' : ''}</div></div>`;
+  }
+
+  // Preview table
+  html += `<div class="import-preview">
+    <div class="import-preview-header">Preview <span class="import-preview-count">${responses.length} responses</span></div>
+    <table class="import-preview-table">
+      <tr><th>Name</th><th>Sprint</th><th>Questions Scored</th><th>Avg Score</th></tr>`;
+
+  responses.forEach(r => {
+    const scored = Object.values(r.scores).filter(v => v != null).length;
+    const scores = Object.values(r.scores).filter(v => v != null);
+    const avg = scores.length > 0 ? (scores.reduce((a, b) => a + b, 0) / scores.length) : null;
+    const avgClass = avg ? getScoreClass(avg) : '';
+    html += `<tr>
+      <td><strong>${escHtml(r.name)}</strong></td>
+      <td>${r.sprintScore || '—'}</td>
+      <td>${scored}/${total}</td>
+      <td><span class="${avgClass}" style="padding:2px 8px;border-radius:4px;font-weight:700;">${avg ? avg.toFixed(1) : '—'}</span></td>
+    </tr>`;
+  });
+
+  html += '</table></div>';
+  document.getElementById('formsImportPreview').innerHTML = html;
+}
+
+function confirmFormsImport() {
+  if (!formsImportData) return;
+  const { responses } = formsImportData;
+
+  if (formsImportMode === 'replace') {
+    state.members = [];
+    state.sprintRatings = {};
+    state.questionScores = {};
+  }
+
+  responses.forEach(r => {
+    // Find or create member
+    let member = state.members.find(m => m.name.toLowerCase() === r.name.toLowerCase());
+    if (!member) {
+      member = { id: 'm_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), name: r.name };
+      state.members.push(member);
+    }
+
+    // Sprint rating
+    if (r.sprintScore != null) {
+      if (!state.sprintRatings[member.id]) state.sprintRatings[member.id] = {};
+      state.sprintRatings[member.id].score = r.sprintScore;
+      if (r.sprintComment) state.sprintRatings[member.id].comment = r.sprintComment;
+    }
+
+    // Question scores
+    for (const [qid, score] of Object.entries(r.scores)) {
+      if (!state.questionScores[qid]) state.questionScores[qid] = {};
+      state.questionScores[qid][member.id] = score;
+    }
+  });
+
+  saveState();
+  closeFormsImport();
+  renderTeamMembers();
+  renderSprintRatings();
+  renderQuestions();
+  updateAllAverages();
+  renderInsights();
+
+  // Show success
+  const el = document.getElementById('saveStatus');
+  el.textContent = `✅ Imported ${responses.length} responses`;
+  el.className = 'save-status saved';
+  setTimeout(() => { el.textContent = 'Auto-saved'; el.className = 'save-status'; }, 3000);
 }
 
 // ── GO ──
