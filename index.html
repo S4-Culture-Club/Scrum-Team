@@ -777,6 +777,64 @@
     box-shadow: 0 1px 4px rgba(117,72,178,0.08);
   }
 
+  /* ── Inline Insights (within question cards) ── */
+  .inline-insight { display: none; }
+  .inline-insight.active {
+    display: block;
+    margin: 4px 0 8px;
+    padding: 16px 20px;
+    background: var(--surface-alt);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    animation: fadeIn 0.3s ease;
+  }
+  .inline-insight-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .inline-insight-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  }
+  .inline-insight-title { flex: 1; }
+  .inline-insight-title .insight-status { margin-bottom: 0; }
+  .inline-insight-interpretation {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .inline-insight-variance {
+    margin-bottom: 12px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, var(--purple-light) 0%, #EDE6FF 100%);
+    border: 1px solid #D5C8F0;
+    font-size: 0.78rem;
+    color: var(--purple);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .inline-insight-actions {
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+  .inline-insight-actions .insight-actions-label { margin-bottom: 6px; }
+  .inline-insight-actions .insight-action-item { font-size: 0.82rem; }
+
   .insights-empty {
     padding: 40px 32px;
     text-align: center;
@@ -819,7 +877,8 @@
     .header { position: static; }
     .btn, .add-member-inline, .notes-toggle, .footer-actions { display: none !important; }
     .notes-area { display: block !important; }
-    .section-card, .team-setup, .actions-section, .summary-bar, .insights-section { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    .inline-insight.active { display: block !important; }
+    .section-card, .team-setup, .actions-section, .summary-bar { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
   }
 
   /* ── Animations ── */
@@ -833,7 +892,7 @@
     75% { transform: translateX(-1px); }
     100% { transform: translateX(0); }
   }
-  .section-card, .team-setup, .summary-bar, .actions-section, .insights-section { animation: fadeIn 0.4s ease both; }
+  .section-card, .team-setup, .summary-bar, .actions-section { animation: fadeIn 0.4s ease both; }
 
   /* ── Score Instructions ── */
   .score-instructions {
@@ -1164,20 +1223,6 @@
       </div>
     </div>
     <div class="section-body" id="questionsContainer"></div>
-  </div>
-
-  <!-- Insights & Suggested Actions -->
-  <div class="insights-section" id="insightsSection">
-    <div class="insights-header">
-      <div class="section-icon" style="background:var(--green-light);color:var(--green);">💡</div>
-      <h2>Insights & Suggested Actions</h2>
-    </div>
-    <div class="insights-body" id="insightsContainer">
-      <div class="insights-empty">
-        <div class="empty-icon">📊</div>
-        Score at least one question above to see insights and suggested actions.
-      </div>
-    </div>
   </div>
 
   <!-- Actions -->
@@ -2186,7 +2231,7 @@ function commitQuestionScore(el, qid, mid) {
   updateQuestionAvg(qid);
   updateDimensionAvgs();
   updateSummary();
-  renderInsights();
+  renderQuestionInsight(qid);
 }
 
 function updateSprintAvg() {
@@ -2243,6 +2288,8 @@ function renderQuestions() {
         <div class="avg-value" id="avg_${q.id}">—</div>
       </div>
     </div>
+
+    <div class="inline-insight" id="insight_${q.id}"></div>
 
     <div class="question-notes">
       <button class="notes-toggle ${hasNotes ? 'has-content' : ''}" onclick="toggleNotes('${q.id}')">
@@ -2367,114 +2414,62 @@ function getScoreVariance(qid) {
 }
 
 function renderInsights() {
-  const container = document.getElementById('insightsContainer');
-
-  // Check if any scores exist
-  let hasAnyScores = false;
   QUESTIONS.forEach(q => {
-    state.members.forEach(m => {
-      if (state.questionScores[q.id]?.[m.id] != null) hasAnyScores = true;
-    });
+    renderQuestionInsight(q.id);
   });
+}
 
-  if (!hasAnyScores || state.members.length === 0) {
-    container.innerHTML = `<div class="insights-empty">
-      <div class="empty-icon">📊</div>
-      Score at least one question above to see insights and suggested actions.
-    </div>`;
+function renderQuestionInsight(qid) {
+  const el = document.getElementById('insight_' + qid);
+  if (!el) return;
+
+  const scores = state.members.map(m => state.questionScores[qid]?.[m.id]).filter(s => s != null);
+
+  if (scores.length === 0 || state.members.length === 0) {
+    el.innerHTML = '';
+    el.classList.remove('active');
     return;
   }
 
-  let html = '';
+  const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
+  const tier = getInsightTier(avg);
+  const insight = QUESTION_INSIGHTS[qid]?.[tier];
+  if (!insight) { el.innerHTML = ''; el.classList.remove('active'); return; }
 
-  // Group by dimension
-  DIMENSIONS.forEach(dim => {
-    const dimQuestions = QUESTIONS.filter(q => q.dim === dim.id);
+  const scoreClass = getScoreClass(avg);
+  const variance = getScoreVariance(qid);
 
-    // Calculate dimension average
-    let dimScores = [];
-    dimQuestions.forEach(q => {
-      state.members.forEach(m => {
-        const s = state.questionScores[q.id]?.[m.id];
-        if (s != null) dimScores.push(s);
-      });
-    });
-    const dimAvg = dimScores.length > 0 ? (dimScores.reduce((a,b)=>a+b,0)/dimScores.length) : null;
+  let bulletBg, bulletColor;
+  if (tier === 'low') { bulletBg = 'var(--red-light)'; bulletColor = 'var(--red)'; }
+  else if (tier === 'mid') { bulletBg = 'var(--amber-light)'; bulletColor = 'var(--amber)'; }
+  else { bulletBg = 'var(--green-light)'; bulletColor = 'var(--green)'; }
 
-    // Check if any question in this dimension has scores
-    let dimHasScores = false;
-    dimQuestions.forEach(q => {
-      state.members.forEach(m => {
-        if (state.questionScores[q.id]?.[m.id] != null) dimHasScores = true;
-      });
-    });
-    if (!dimHasScores) return;
+  let html = `<div class="inline-insight-header">
+    <div class="inline-insight-badge ${scoreClass}">${avg.toFixed(1)}</div>
+    <div class="inline-insight-title">
+      <div class="insight-status ${scoreClass}">${insight.status}</div>
+    </div>
+  </div>
+  <div class="inline-insight-interpretation">${insight.interpretation}</div>`;
 
-    const dimScoreClass = dimAvg ? getScoreClass(dimAvg) : '';
+  if (variance.spread >= 2 && scores.length >= 2) {
+    html += `<div class="inline-insight-variance">
+      ⚡ High variance — scores range from ${variance.min} to ${variance.max}. The team experiences this very differently. Discuss why.
+    </div>`;
+  }
 
-    html += `<div class="insights-dim-group">
-      <div class="insights-dim-header" onclick="toggleInsightDim(this)">
-        <div class="dimension-dot" style="background:${dim.color}"></div>
-        ${dim.label}
-        ${dimAvg ? `<div class="dim-avg-pill ${dimScoreClass}">${dimAvg.toFixed(1)}</div>` : ''}
-        <span class="toggle-arrow">▾</span>
-      </div>
-      <div class="insights-dim-content">`;
-
-    dimQuestions.forEach((q, qi) => {
-      const scores = state.members.map(m => state.questionScores[q.id]?.[m.id]).filter(s => s != null);
-      if (scores.length === 0) return;
-
-      const avg = scores.reduce((a,b) => a+b, 0) / scores.length;
-      const tier = getInsightTier(avg);
-      const insight = QUESTION_INSIGHTS[q.id]?.[tier];
-      if (!insight) return;
-
-      const scoreClass = getScoreClass(avg);
-      const variance = getScoreVariance(q.id);
-      const qIndex = QUESTIONS.indexOf(q) + 1;
-
-      // Determine action bullet style per tier
-      let bulletBg, bulletColor;
-      if (tier === 'low') { bulletBg = 'var(--red-light)'; bulletColor = 'var(--red)'; }
-      else if (tier === 'mid') { bulletBg = 'var(--amber-light)'; bulletColor = 'var(--amber)'; }
-      else { bulletBg = 'var(--green-light)'; bulletColor = 'var(--green)'; }
-
-      html += `<div class="insight-card">
-        <div class="insight-score-badge ${scoreClass}">${avg.toFixed(1)}</div>
-        <div class="insight-content">
-          <div class="insight-question"><span class="q-num">Q${qIndex}.</span>${q.text}</div>
-          <div class="insight-status ${scoreClass}">${insight.status}</div>
-          <div class="insight-interpretation">${insight.interpretation}</div>`;
-
-      // Variance warning
-      if (variance.spread >= 2 && scores.length >= 2) {
-        html += `<div class="insight-variance">
-          ⚡ High variance detected — scores range from ${variance.min} to ${variance.max}. The team experiences this very differently. Discuss why.
-        </div>`;
-      }
-
-      html += `<div class="insight-actions-label">Suggested Actions</div>`;
-      insight.actions.forEach(action => {
-        html += `<div class="insight-action-item">
-          <div class="action-bullet" style="background:${bulletBg};color:${bulletColor};">→</div>
-          <span>${action}</span>
-        </div>`;
-      });
-
-      html += `</div></div>`;
-    });
-
-    html += `</div></div>`;
+  html += `<div class="inline-insight-actions">
+    <div class="insight-actions-label">Suggested Actions</div>`;
+  insight.actions.forEach(action => {
+    html += `<div class="insight-action-item">
+      <div class="action-bullet" style="background:${bulletBg};color:${bulletColor};">→</div>
+      <span>${action}</span>
+    </div>`;
   });
+  html += `</div>`;
 
-  container.innerHTML = html;
-}
-
-function toggleInsightDim(header) {
-  header.classList.toggle('collapsed');
-  const content = header.nextElementSibling;
-  content.classList.toggle('hidden');
+  el.innerHTML = html;
+  el.classList.add('active');
 }
 
 // ── ACTIONS ──
